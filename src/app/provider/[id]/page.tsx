@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { Profile, Review, Task } from "@/types";
+import { Profile, Review, Booking } from "@/types";
 import { ArrowLeft, Star, CheckCircle, MapPin, Calendar } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 
@@ -14,7 +13,7 @@ export default function ProviderProfilePage() {
   const { t } = useLanguage();
   const [provider, setProvider] = useState<Profile | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
+  const [completedBookings, setCompletedBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,14 +39,14 @@ export default function ProviderProfilePage() {
         .order("created_at", { ascending: false });
       setReviews(reviewsData || []);
 
-      const { data: tasks } = await supabase
-        .from("tasks")
-        .select("*")
+      const { data: bookings } = await supabase
+        .from("bookings")
+        .select("*, package:service_packages(*, category:service_categories(*))")
         .eq("provider_id", id)
         .eq("status", "completed")
         .order("created_at", { ascending: false })
         .limit(10);
-      setCompletedTasks(tasks || []);
+      setCompletedBookings(bookings || []);
 
       setLoading(false);
     }
@@ -113,7 +112,7 @@ export default function ProviderProfilePage() {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white rounded-2xl border border-gray-100 p-4 text-center shadow-sm">
-            <div className="text-2xl font-black text-gray-900">{completedTasks.length}</div>
+            <div className="text-2xl font-black text-gray-900">{completedBookings.length}</div>
             <div className="text-gray-400 text-xs mt-1 leading-tight">{t('tasksCompleted')}</div>
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 p-4 text-center shadow-sm">
@@ -178,20 +177,23 @@ export default function ProviderProfilePage() {
           )}
         </div>
 
-        {/* Recent completed tasks */}
-        {completedTasks.length > 0 && (
+        {/* Recent completed bookings */}
+        {completedBookings.length > 0 && (
           <div>
             <h2 className="text-lg font-bold text-gray-900 mb-4">Completed Work</h2>
             <div className="space-y-2">
-              {completedTasks.slice(0, 5).map((task) => (
-                <div key={task.id} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex items-center justify-between">
-                  <div className="min-w-0">
-                    <div className="font-semibold text-gray-900 text-sm truncate">{task.title}</div>
-                    <div className="text-xs text-gray-400 capitalize mt-0.5">{task.category.replace("_", " ")} · {task.location}</div>
+              {completedBookings.slice(0, 5).map((booking) => (
+                <div key={booking.id} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex items-center justify-between">
+                  <div className="min-w-0 flex items-center gap-3">
+                    <span className="text-2xl shrink-0">{booking.package?.category?.icon || "🔧"}</span>
+                    <div className="min-w-0">
+                      <div className="font-semibold text-gray-900 text-sm truncate">{booking.package?.name}</div>
+                      <div className="text-xs text-gray-400 mt-0.5">{booking.package?.category?.name}</div>
+                    </div>
                   </div>
-                  <div className="shrink-0 ml-3">
-                    <div className="font-bold text-green-600 text-sm">LKR {task.budget.toLocaleString()}</div>
-                    <div className="text-xs text-green-500 text-right">✓ Done</div>
+                  <div className="shrink-0 ml-3 text-right">
+                    <div className="font-bold text-green-600 text-sm">LKR {booking.package?.price.toLocaleString()}</div>
+                    <div className="text-xs text-green-500">✓ Done</div>
                   </div>
                 </div>
               ))}
