@@ -6,17 +6,10 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const categories = [
-  { name: "Cleaning", icon: "🧹", desc: "Deep clean, regular housekeeping" },
-  { name: "Moving", icon: "📦", desc: "Help moving home or office" },
-  { name: "Repairs", icon: "🔧", desc: "Fix anything around the house" },
-  { name: "Errands", icon: "🛍️", desc: "Shopping, deliveries, queues" },
-  { name: "Gardening", icon: "🌿", desc: "Lawn care & landscaping" },
-  { name: "Painting", icon: "🖌️", desc: "Interior and exterior painting" },
-  { name: "Plumbing", icon: "🚿", desc: "Leaks, installations, blockages" },
-  { name: "Electrical", icon: "⚡", desc: "Wiring, fixtures, installations" },
-  { name: "Nanny", icon: "👶", desc: "Childcare and babysitting" },
-  { name: "Elderly Care", icon: "🧓", desc: "Companionship & assistance" },
-  { name: "Cat Sitting", icon: "🐱", desc: "Pet care while you're away" },
+  { name: "Cleaning", icon: "🧹", desc: "Studio to 4BR — fixed prices" },
+  { name: "AC Servicing", icon: "❄️", desc: "Clean, gas refill, installation" },
+  { name: "Plumbing", icon: "🚿", desc: "Leaks, drains, installations" },
+  { name: "Electrical", icon: "⚡", desc: "Wiring, fixtures, repairs" },
 ];
 
 export default function HomePage() {

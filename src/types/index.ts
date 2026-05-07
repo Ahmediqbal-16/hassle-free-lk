@@ -1,20 +1,6 @@
 export type UserRole = 'customer' | 'provider' | 'admin'
-
-export type TaskStatus = 'open' | 'assigned' | 'in_progress' | 'completed' | 'cancelled'
-
-export type ServiceCategory =
-  | 'cleaning'
-  | 'moving'
-  | 'repairs'
-  | 'errands'
-  | 'gardening'
-  | 'painting'
-  | 'plumbing'
-  | 'electrical'
-  | 'nanny'
-  | 'elderly_care'
-  | 'cat_sitting'
-  | 'other'
+export type BookingStatus = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'
+export type PaymentMethod = 'cash' | 'online'
 
 export interface Profile {
   id: string
@@ -33,46 +19,58 @@ export interface Profile {
   created_at: string
 }
 
-export interface Task {
+export interface ServiceCategory {
   id: string
+  name: string
+  icon: string
+  description?: string
+  is_active: boolean
+  sort_order: number
+}
+
+export interface ServicePackage {
+  id: string
+  category_id: string
+  name: string
+  description?: string
+  price: number
+  duration_minutes: number
+  is_active: boolean
+  sort_order: number
+  category?: ServiceCategory
+}
+
+export interface Booking {
+  id: string
+  package_id: string
   customer_id: string
   provider_id?: string
-  title: string
-  description: string
-  category: ServiceCategory
-  status: TaskStatus
-  budget: number
-  location: string
-  scheduled_date?: string
-  scheduled_time?: string
+  status: BookingStatus
+  payment_method: PaymentMethod
+  payment_status: string
+  scheduled_date: string
+  scheduled_time: string
+  address: string
+  area?: string
   latitude?: number
   longitude?: number
-  photos?: string[]
+  notes?: string
   created_at: string
+  updated_at: string
+  package?: ServicePackage & { category?: ServiceCategory }
   customer?: Profile
   provider?: Profile
 }
 
 export interface Review {
   id: string
-  task_id: string
+  booking_id?: string
   reviewer_id: string
   reviewee_id: string
   rating: number
   comment?: string
   created_at: string
   reviewer?: Profile
-}
-
-export interface Bid {
-  id: string
-  task_id: string
-  provider_id: string
-  amount: number
-  message?: string
-  status: 'pending' | 'accepted' | 'rejected'
-  created_at: string
-  provider?: Profile
 }
 
 export interface BankAccount {
@@ -98,23 +96,4 @@ export interface Notification {
   read: boolean
   task_id?: string
   created_at: string
-}
-
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'payout_pending' | 'payout_sent'
-
-export interface Payment {
-  id: string
-  task_id: string
-  customer_id: string
-  provider_id: string
-  amount: number
-  provider_amount: number
-  payhere_order_id?: string
-  payhere_payment_id?: string
-  status: PaymentStatus
-  created_at: string
-  updated_at: string
-  task?: Task
-  provider?: Profile
-  customer?: Profile
 }
